@@ -17,7 +17,7 @@ type Context struct {
 }
 
 //todo 这边的依赖注入还不是很懂，暂时这样可以使用,有点懂了
-func NewContexter() macaron.Handler {
+func Contexter() macaron.Handler {
 	return func(ctx *macaron.Context, sess session.Store) {
 		c := &Context{
 			Context: ctx,

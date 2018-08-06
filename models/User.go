@@ -8,12 +8,22 @@ import (
 )
 
 type User struct {
-	ID        int64
+	ID        int
 	Account   string
 	Password  string
 	Name      string
-	Status    int64
+	Status    int
 	CreatedAt int64
+}
+
+func NewUser() *User {
+	return &User{}
+}
+
+func GetUserById(id int) *User {
+	var user User
+	db.First(&user, id)
+	return &user
 }
 
 func GetTestUser() *User {

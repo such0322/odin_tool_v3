@@ -3,6 +3,8 @@ package cmd
 import (
 	"log"
 	"odin_tool_v3/libs/context"
+	"odin_tool_v3/libs/setting"
+	"odin_tool_v3/models"
 	"odin_tool_v3/routes"
 	"odin_tool_v3/routes/auth"
 	"odin_tool_v3/routes/index"
@@ -40,6 +42,9 @@ func runWeb(c *cli.Context) error {
 	m.Use(macaron.Recovery())
 	m.Use(macaron.Static("public"))
 	m.Use(macaron.Renderer(macaron.RenderOptions{IndentJSON: false}))
+	setting.LoadCfg()
+	models.NewEngine()
+
 	sessionOptions := session.Options{
 		Provider: "memory",
 		//ProviderConfig:"",
@@ -48,18 +53,23 @@ func runWeb(c *cli.Context) error {
 		Maxlifetime: 86400,
 	}
 	m.Use(session.Sessioner(sessionOptions))
+	m.Use(context.Contexter())
 
-	m.Use(context.NewContexter())
+	router(m)
 
+	m.Run()
+	return nil
+}
+
+func router(m *macaron.Macaron) {
 	//路由
 	m.Get("/", index.Index)
+	m.Get("debug", index.Debug)
+
 	m.Get("auth/login", auth.Login)
 	m.Post("auth/postLogin", auth.PostLogin)
 
 	m.NotFound(routes.NotFound)
-
-	m.Run()
-	return nil
 }
 
 func globalInit() macaron.Handler {
@@ -76,5 +86,6 @@ func globalInit() macaron.Handler {
 		//defer logfile.Close()
 		logger := log.New(logfile, "[DEBUG]", log.LstdFlags|log.Llongfile)
 		c.Map(logger)
+
 	}
 }
