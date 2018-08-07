@@ -1,9 +1,12 @@
 package index
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"log"
 	"odin_tool_v3/libs/context"
-	"odin_tool_v3/models"
+	"odin_tool_v3/models/tool"
+	"strconv"
 )
 
 func Index(c *context.Context, log *log.Logger) {
@@ -17,7 +20,17 @@ func Index(c *context.Context, log *log.Logger) {
 }
 
 func Debug(c *context.Context) {
-	var id int = 2
-	user := models.GetUserById(id)
-	c.JSON(200, user)
+	id, _ := strconv.Atoi(c.Req.FormValue("id"))
+	pwd := c.Req.FormValue("pwd")
+	md5ctx := md5.New()
+	md5ctx.Write([]byte(pwd))
+	md5pwd := md5ctx.Sum(nil)
+	user := tool.GetUserById(id)
+
+	c.JSON(200, &Aaa{user, hex.EncodeToString(md5pwd)})
+}
+
+type Aaa struct {
+	*tool.User
+	S string
 }

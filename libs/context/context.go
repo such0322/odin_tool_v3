@@ -3,7 +3,7 @@ package context
 import (
 	"fmt"
 	"net/http"
-	"odin_tool_v3/models"
+	"odin_tool_v3/models/tool"
 
 	"github.com/go-macaron/macaron"
 	"github.com/go-macaron/session"
@@ -13,7 +13,7 @@ type Context struct {
 	*macaron.Context
 	Session session.Store
 
-	User *models.User
+	User *tool.User
 }
 
 //todo 这边的依赖注入还不是很懂，暂时这样可以使用,有点懂了
@@ -24,19 +24,22 @@ func Contexter() macaron.Handler {
 			Session: sess,
 		}
 
-		c.User = models.UserSignin(sess)
+		c.User = tool.UserSignin(sess)
 		ctx.Map(c)
 	}
 }
 
+//404页面
 func (c *Context) NotFound() {
 	c.Handle(http.StatusNotFound, "", nil)
 }
 
+//500页面
 func (c *Context) ServerError(title string, err error) {
 	c.Handle(http.StatusInternalServerError, title, err)
 }
 
+//错误页面通用接口
 func (c *Context) Handle(status int, title string, err error) {
 	switch status {
 	case http.StatusNotFound:

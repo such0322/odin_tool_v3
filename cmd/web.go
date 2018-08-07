@@ -4,7 +4,7 @@ import (
 	"log"
 	"odin_tool_v3/libs/context"
 	"odin_tool_v3/libs/setting"
-	"odin_tool_v3/models"
+	"odin_tool_v3/models/tool"
 	"odin_tool_v3/routes"
 	"odin_tool_v3/routes/auth"
 	"odin_tool_v3/routes/index"
@@ -43,7 +43,7 @@ func runWeb(c *cli.Context) error {
 	m.Use(macaron.Static("public"))
 	m.Use(macaron.Renderer(macaron.RenderOptions{IndentJSON: false}))
 	setting.LoadCfg()
-	models.NewEngine()
+	tool.NewEngine()
 
 	sessionOptions := session.Options{
 		Provider: "memory",

@@ -2,7 +2,7 @@ package auth
 
 import (
 	"odin_tool_v3/libs/context"
-	"odin_tool_v3/models"
+	"odin_tool_v3/models/tool"
 )
 
 func Login(c *context.Context) {
@@ -13,7 +13,7 @@ func PostLogin(c *context.Context) {
 	account := c.Req.FormValue("account")
 	passwd := c.Req.FormValue("passwd")
 
-	user, err := models.UserLogin(account, passwd)
+	user, err := tool.UserLogin(account, passwd)
 	if err != nil {
 		c.ServerError("登录失败", err)
 		return

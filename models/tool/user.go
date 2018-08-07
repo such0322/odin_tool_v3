@@ -1,8 +1,12 @@
-package models
+package tool
 
 import (
-	"errors"
 	"time"
+
+	"crypto/md5"
+
+	"encoding/hex"
+	"errors"
 
 	"github.com/go-macaron/session"
 )
@@ -39,27 +43,27 @@ func GetTestUser() *User {
 }
 
 func UserSignin(sess session.Store) *User {
-	uid := sess.Get("uid")
-	if uid == nil {
+	uid, ok := sess.Get("uid").(int)
+	if !ok {
 		return nil
 	}
-	user := GetTestUser()
+	user := GetUserById(uid)
 	return user
 }
 
 func UserLogin(account, passwd string) (*User, error) {
-	t := time.Now()
-	if account == "moz1" {
-		return &User{
-			ID:        1,
-			Account:   "moz1",
-			Password:  "",
-			Name:      "moz_name",
-			Status:    1,
-			CreatedAt: t.Unix(),
-		}, nil
+	var user User
+	err := db.First(&user, "account = ?", account).Error
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("不是moz1")
+	md5ctx := md5.New()
+	md5ctx.Write([]byte(passwd))
+	md5pwd := hex.EncodeToString(md5ctx.Sum(nil))
+	if md5pwd != user.Password {
+		return nil, errors.New("密码错误，请重试")
+	}
+	return &user, nil
 }
 
 func getUserByAccount(account string) (*User, error) {
