@@ -22,3 +22,8 @@ func PostLogin(c *context.Context) {
 	c.Session.Set("uname", user.Name)
 	c.Redirect("/")
 }
+
+func Logout(c *context.Context) {
+	c.Session.Flush()
+	c.Redirect("/")
+}

@@ -1,0 +1,4 @@
+package master
+
+func GetTestWorld() {
+}

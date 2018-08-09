@@ -26,7 +26,7 @@ func NewUser() *User {
 
 func GetUserById(id int) *User {
 	var user User
-	db.First(&user, id)
+	DB.First(&user, id)
 	return &user
 }
 
@@ -53,7 +53,7 @@ func UserSignin(sess session.Store) *User {
 
 func UserLogin(account, passwd string) (*User, error) {
 	var user User
-	err := db.First(&user, "account = ?", account).Error
+	err := DB.First(&user, "account = ?", account).Error
 	if err != nil {
 		return nil, err
 	}
