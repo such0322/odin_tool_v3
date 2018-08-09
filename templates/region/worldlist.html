@@ -1,7 +1,34 @@
 {{ template "header" .}}
-Hello {{.Name}}
+Hello {{.Name}}, go_ver: {{GoVer}}
         <div class="row">
             <table class="table">
+                <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>名称</td>
+                    <td>章节</td>
+                    <td>条件描述</td>
+                    <td>开槽</td>
+                    <td>开启时间</td>
+                    <td>关闭时间</td>
+                    <td></td>
+                </tr>
+
+                </thead>
+                <tbody>
+                {{range $ko, $vo := .worlds}}
+                <tr>
+                    <td> {{$vo.ID}} </td>
+                    <td> {{$vo.Name}} </td>
+                    <td> {{$vo.Chapter}} </td>
+                    <td> {{$vo.UnlockCondition}} </td>
+                    <td> {{ToTF $vo.SlotDiff}} </td>
+                    <td> {{$vo.StartDate.Format "2006-01-02 15:04:05"}} </td>
+                    <td> {{$vo.EndDate.Format "2006-01-02 15:04:05"}} </td>
+                    <td> <a href="/areas?world_id={{$vo.ID}}">区域</a></td>
+                </tr>
+                {{end}}
+                </tbody>
             </table>
         </div>
 {{ template "footer" .}}

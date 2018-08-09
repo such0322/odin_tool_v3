@@ -13,6 +13,7 @@ func Index(c *context.Context) {
 		c.Data["Name"] = "Guest"
 	}
 	c.Data["Title"] = "index"
+	log.Warn("asdfasdfsdfasfd")
 	c.HTML(200, "index/index")
 	//c.JSON(200, []string{"a", "b"})
 }

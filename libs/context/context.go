@@ -56,7 +56,7 @@ func (c *Context) Handle(status int, title string, err error) {
 	c.HTML(status, fmt.Sprintf("status/%d", status))
 }
 
-func IsLogin() macaron.Handler {
+func NeedLogin() macaron.Handler {
 	return func(c *Context) {
 		if c.User == nil {
 			fmt.Println("bbb")

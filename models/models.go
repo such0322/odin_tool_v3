@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"odin_tool_v3/libs/setting"
+	AM "odin_tool_v3/models/api/master"
 	"odin_tool_v3/models/tool"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -71,6 +72,9 @@ func NewEngines() {
 
 	getConfig("database", "tool")
 	tool.DB, _ = manager.newEngine("tool")
+
+	getConfig("database_api_master", "api_master")
+	AM.DB, _ = manager.newEngine("api_master")
 
 }
 

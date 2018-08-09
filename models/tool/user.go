@@ -1,12 +1,10 @@
 package tool
 
 import (
-	"time"
-
 	"crypto/md5"
-
 	"encoding/hex"
 	"errors"
+	"time"
 
 	"github.com/go-macaron/session"
 )

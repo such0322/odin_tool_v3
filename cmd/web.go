@@ -11,6 +11,8 @@ import (
 
 	"odin_tool_v3/routes/region"
 
+	"odin_tool_v3/libs/template"
+
 	"github.com/go-macaron/macaron"
 	"github.com/go-macaron/session"
 	"github.com/urfave/cli"
@@ -34,8 +36,11 @@ func runWeb(c *cli.Context) error {
 	logger.InitLogger()
 	//使用经典的macaron实例
 	m := macaron.Classic()
-
-	m.Use(macaron.Renderer(macaron.RenderOptions{IndentJSON: false}))
+	funcMap := template.NewFuncMap()
+	m.Use(macaron.Renderer(macaron.RenderOptions{
+		IndentJSON: false,
+		Funcs:      funcMap,
+	}))
 	setting.LoadCfg()
 	models.NewEngines()
 
@@ -56,6 +61,8 @@ func runWeb(c *cli.Context) error {
 }
 
 func router(m *macaron.Macaron) {
+	//needLogin:=context.NeedLogin()
+
 	//路由
 	m.Get("/", index.Index)
 	m.Get("/debug", index.Debug)
@@ -66,25 +73,7 @@ func router(m *macaron.Macaron) {
 
 	m.Group("", func() {
 		m.Get("/worlds", region.WorldList)
-	}, context.IsLogin())
+	})
 
 	m.NotFound(routes.NotFound)
 }
-
-//func globalInit() macaron.Handler {
-//	return func(c *macaron.Context) {
-//		//fixme 或许就不应该在这里指定logger的位置,应该使用其他的包比如clog？
-//		logPath := "logs/app.log"
-//
-//		logfile, err := os.OpenFile(logPath, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm)
-//		if err != nil {
-//			log.Fatalln("open logfile failed")
-//		}
-//		c.Map(logfile)
-//		//todo 这里close了下面都写不进去了，暂时还不知道应该在哪里关闭
-//		//defer logfile.Close()
-//		logger := log.New(logfile, "[DEBUG]", log.LstdFlags|log.Llongfile)
-//		c.Map(logger)
-//
-//	}
-//}
