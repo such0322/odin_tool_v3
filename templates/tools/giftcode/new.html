@@ -1,6 +1,5 @@
-{{ define "/gift/new" }}
 {{ template "header" . }}
-<link rel="stylesheet" href="/public/css/jquery.datetimepicker.min.css" >
+<link rel="stylesheet" href="/css/jquery.datetimepicker.min.css" >
 <div class="container">
   <form class="form-horizontal" method="post" action="#">
     <div class="form-group">
@@ -103,7 +102,7 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<script type="text/javascript" src="/public/js/jquery.datetimepicker.full.min.js"></script>
+<script type="text/javascript" src="/js/jquery.datetimepicker.full.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
   $.datetimepicker.setLocale('zh');
@@ -165,6 +164,10 @@ $(document).ready(function(){
   var reward_datas=[]
   $("#reward_type").change(function(){
     var reward_type = $(this).val()
+    var reward_type_alia = reward_type
+    if(reward_type == "map"){
+        reward_type =  "maps"
+    }
     if(reward_type == ""){
       $("#new_reward_bouns").html("")
       return
@@ -173,11 +176,10 @@ $(document).ready(function(){
     if (reward_datas[reward_type] == undefined){
       console.log(reward_type)
       $.ajax({
-        url:"/gift/getBounsAll?reward_type="+reward_type,
+        url:"/gift/getBounsAll?reward_type="+reward_type_alia,
         async:false,
         success:function(data){
-          rs = JSON.parse(data)
-          reward_datas[reward_type] = rs
+          reward_datas[reward_type] = data
         },
         error:function(jqXHR, textStatus, errorThrow){
           alert(jqXHR.status+"!!!\r\n获取失败，请联系管理员")
@@ -230,4 +232,3 @@ $(document).ready(function(){
 });
 </script>
 {{ template "footer" . }}
-{{ end }}

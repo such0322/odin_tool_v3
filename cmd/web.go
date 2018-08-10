@@ -79,6 +79,10 @@ func router(m *macaron.Macaron) {
 	m.Group("", func() {
 		m.Get("/worlds", region.WorldList)
 		m.Get("/giftcodes", tools.GiftCodeList)
+		m.Get("/gift/new", tools.NewGift)
+		m.Post("/gift/new", tools.CreateGift)
+		m.Get("/gift/randomCode", tools.RandomCode)
+		m.Get("/gift/getBounsAll", tools.GetBounsAll)
 	})
 
 	m.NotFound(routes.NotFound)

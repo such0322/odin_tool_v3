@@ -8,6 +8,8 @@ import (
 	BMi "odin_tool_v3/models/bridge/misc"
 	"odin_tool_v3/models/tool"
 
+	"odin_tool_v3/models/api/master/bonus"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 )
@@ -76,6 +78,7 @@ func NewEngines() {
 
 	getConfig("database_api_master", "api_master")
 	AM.DB, _ = manager.newEngine("api_master")
+	bonus.DB = AM.DB
 
 	getConfig("database_bridge_misc", "bridge_misc")
 	BMi.DB, _ = manager.newEngine("bridge_misc")
