@@ -10,6 +10,7 @@ import (
 	"odin_tool_v3/routes/auth"
 	"odin_tool_v3/routes/index"
 	"odin_tool_v3/routes/region"
+	"odin_tool_v3/routes/tools"
 
 	"github.com/go-macaron/macaron"
 	"github.com/go-macaron/session"
@@ -77,6 +78,7 @@ func router(m *macaron.Macaron) {
 
 	m.Group("", func() {
 		m.Get("/worlds", region.WorldList)
+		m.Get("/giftcodes", tools.GiftCodeList)
 	})
 
 	m.NotFound(routes.NotFound)

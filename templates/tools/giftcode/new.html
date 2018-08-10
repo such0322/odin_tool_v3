@@ -1,0 +1,233 @@
+{{ define "/gift/new" }}
+{{ template "header" . }}
+<link rel="stylesheet" href="/public/css/jquery.datetimepicker.min.css" >
+<div class="container">
+  <form class="form-horizontal" method="post" action="#">
+    <div class="form-group">
+      <label class="col-sm-2 control-label">礼包类型</label>
+      <div class="col-sm-2">
+        <select name="type" class="form-control">
+          <option value="1">重复礼包</option>
+          <option value="2">单次礼包</option>
+          <option value="3">多次礼包</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">礼包码</label>
+      <div class="col-sm-2">
+        <input id="code" name="code" type="text" class="form-control">
+      </div>
+      <div class="col-sm-2">
+        <button id="random_code" type="button" class="btn btn-default" >随机</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">使用频道</label>
+      <div class="col-sm-2">
+        <select name="channel" class="form-control">
+          <option value="">all</option>
+          <option value="ios">ios</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">可用数量</label>
+      <div class="col-sm-2">
+        <input name="quantity" type="number" class="form-control">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">开始时间</label>
+      <div class="col-sm-2">
+        <input name="start_date" type="text" class="form-control datetimepicker">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">结束时间</label>
+      <div class="col-sm-2">
+        <input name="end_date" type="text" class="form-control datetimepicker">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label">奖励</label>
+      <div class="col-sm-10">
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#newReward">新增奖励</button>
+      </div>
+      <hr/>
+      <div id="rewards" class="col-sm-offset-2 col-sm-10">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-default">生成</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+<div class="modal fade"  id="newReward" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">新增奖励</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label">奖励类型</label>
+            <div class="col-sm-4">
+              <select id="reward_type" name="reward_type" class="form-control">
+                <option value="">--请选择--</option>
+                {{range $k, $v := .RewardType}}
+                <option value="{{$k}}">{{$v}}</option>
+                {{end}}
+              </select>
+            </div>
+          </div>
+          <div id="new_reward_bouns">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button id="addReward" type="button" class="btn btn-primary">完成</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/javascript" src="/public/js/jquery.datetimepicker.full.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $.datetimepicker.setLocale('zh');
+  $('.datetimepicker').datetimepicker({
+    value:  new Date(),
+    format:	'Y/m/d H:i:s',
+    formatTime:	'H:i:s',
+  });
+
+  $("#random_code").click(function(){
+    $.get("/gift/randomCode",function(data,status){
+      if(status == "success"){
+        $("#code").val(data)
+      }else{
+        alert("获取随机礼包码失败，请联系管理员")
+      }
+    });
+  });
+
+  $("#addReward").click(function(){
+    var type = $("#reward_type").val()
+    var id = $("#reward_id").val()
+    var quantity = $("#reward_quantity").val()
+    if(type == "" || id == "" || quantity <= 0){
+      alert("请选择奖励")
+      return
+    }
+
+    var tpl ='\
+    <div class="form-group">\
+      <label class="col-sm-1 control-label">类型</label>\
+      <div class="col-sm-2">\
+        <input name="reward_type" type="text" readonly class="form-control reward_type">\
+      </div>\
+      <label class="col-sm-1 control-label">ID</label>\
+      <div class="col-sm-2">\
+        <input name="reward_id" type="text" readonly class="form-control reward_id">\
+      </div>\
+      <label class="col-sm-1 control-label">数量</label>\
+      <div class="col-sm-2">\
+        <input name="reward_quantity" type="number" readonly class="form-control reward_quantity">\
+      </div>\
+      <div class="col-sm-1 pull-right">\
+        <button type="button" class="btn btn-default reward_move">\
+          <span class="glyphicon glyphicon-remove"></span>\
+        </button>\
+      </div>\
+    </div>'
+    var inner = $(tpl)
+    inner.find(".reward_type").val(type)
+    inner.find(".reward_id").val(id)
+    inner.find(".reward_quantity").val(quantity)
+    $("#rewards").append(inner)
+    $(".reward_move").click(function(){
+       $(this).parent().parent().remove()
+    })
+  });
+
+  var reward_datas=[]
+  $("#reward_type").change(function(){
+    var reward_type = $(this).val()
+    if(reward_type == ""){
+      $("#new_reward_bouns").html("")
+      return
+    }
+    var status = 1;
+    if (reward_datas[reward_type] == undefined){
+      console.log(reward_type)
+      $.ajax({
+        url:"/gift/getBounsAll?reward_type="+reward_type,
+        async:false,
+        success:function(data){
+          rs = JSON.parse(data)
+          reward_datas[reward_type] = rs
+        },
+        error:function(jqXHR, textStatus, errorThrow){
+          alert(jqXHR.status+"!!!\r\n获取失败，请联系管理员")
+          status = 0
+        }
+      });
+    }
+    if(!status){
+      return
+    }
+    var tpl = '\
+      <div class="form-group">\
+        <label class="col-sm-2 control-label" id="reward_obj_name_label"></label>\
+        <div id="reward_obj_name" class="col-sm-4">\
+        </div>\
+      </div>\
+      <div class="form-group">\
+        <label class="col-sm-2 control-label">数量</label>\
+        <div class="col-sm-4">\
+          <input id="reward_quantity" type="number" class="form-control">\
+        </div>\
+      </div>'
+    var tplObj = $(tpl)
+    tplObj.find("#reward_obj_name_label").html(reward_datas[reward_type].name)
+    var inner
+    var reward_obj_name_hide = false
+    if (reward_datas[reward_type]!= undefined && JSON.stringify(reward_datas[reward_type].obj)=="{}"){
+      inner = '<input id="reward_id" type="text" class="form-control" value="1">'
+      reward_obj_name_hide = true
+    }else{
+      var sele = '\
+        <select id="reward_id" class="form-control">\
+          <option value="">--请选择--</option>\
+        </select>'
+      var opt=""
+      for(i=0;i<reward_datas[reward_type].obj.data.length;i++){
+        opt +='<option value="'+reward_datas[reward_type].obj.data[i]["id"]+'">'
+        +reward_datas[reward_type].obj.data[i]["id"]+" "+reward_datas[reward_type].obj.data[i]["name"]+'</option>'
+      }
+      inner = $(sele).append(opt)
+    }
+
+    $("#new_reward_bouns").html(tplObj)
+    $("#reward_obj_name").html(inner)
+    if(reward_obj_name_hide){
+      $("#reward_obj_name").parent().addClass("hidden");
+    }
+
+  });
+});
+</script>
+{{ template "footer" . }}
+{{ end }}

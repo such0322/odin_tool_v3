@@ -5,6 +5,7 @@ import (
 	"log"
 	"odin_tool_v3/libs/setting"
 	AM "odin_tool_v3/models/api/master"
+	BMi "odin_tool_v3/models/bridge/misc"
 	"odin_tool_v3/models/tool"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -76,6 +77,8 @@ func NewEngines() {
 	getConfig("database_api_master", "api_master")
 	AM.DB, _ = manager.newEngine("api_master")
 
+	getConfig("database_bridge_misc", "bridge_misc")
+	BMi.DB, _ = manager.newEngine("bridge_misc")
 }
 
 func getConfig(section, dbName string) {
