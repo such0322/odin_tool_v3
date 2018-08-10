@@ -4,14 +4,12 @@ import (
 	"odin_tool_v3/libs/context"
 	"odin_tool_v3/libs/logger"
 	"odin_tool_v3/libs/setting"
+	"odin_tool_v3/libs/template"
 	"odin_tool_v3/models"
 	"odin_tool_v3/routes"
 	"odin_tool_v3/routes/auth"
 	"odin_tool_v3/routes/index"
-
 	"odin_tool_v3/routes/region"
-
-	"odin_tool_v3/libs/template"
 
 	"github.com/go-macaron/macaron"
 	"github.com/go-macaron/session"
@@ -35,7 +33,13 @@ func runWeb(c *cli.Context) error {
 	//设置日志启用
 	logger.InitLogger()
 	//使用经典的macaron实例
-	m := macaron.Classic()
+	m := macaron.New()
+	//m.Use(logger.SetExectimeLog())
+	//m.Use(macaron.Logger())
+	m.Use(logger.Logger())
+	m.Use(macaron.Recovery())
+	m.Use(macaron.Static("public"))
+
 	funcMap := template.NewFuncMap()
 	m.Use(macaron.Renderer(macaron.RenderOptions{
 		IndentJSON: false,
