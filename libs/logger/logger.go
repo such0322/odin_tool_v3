@@ -22,7 +22,7 @@ func InitLogger() {
 	}
 	//defer logfile.Close()
 	logrus.SetOutput(logfile)
-	logrus.SetLevel(logrus.WarnLevel)
+	logrus.SetLevel(logrus.DebugLevel)
 }
 
 // Logger returns a middleware handler that logs the request as it goes in and the response as it goes out.

@@ -60,8 +60,12 @@ func runWeb(c *cli.Context) error {
 	m.Use(context.Contexter())
 
 	router(m)
+	port := 4000
+	if c.IsSet("port") {
+		port = c.Int("port")
+	}
 
-	m.Run()
+	m.Run(port)
 	return nil
 }
 
