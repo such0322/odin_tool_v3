@@ -111,6 +111,12 @@ type GiftCodes struct {
 	Data []GiftCode
 }
 
+func GetGiftCodeByBatch(batch int) ([]GiftCode) {
+	var gcs []GiftCode
+	DB.Where("batch = ?", batch).Find(&gcs)
+	return gcs
+}
+
 var wg sync.WaitGroup
 
 func (m *GiftCodes) createBatch(data map[string]interface{}) int64 {

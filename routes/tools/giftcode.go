@@ -1,7 +1,10 @@
 package tools
 
 import (
+	"bytes"
+	"encoding/csv"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"odin_tool_v3/libs/context"
 	"odin_tool_v3/libs/pages"
@@ -10,6 +13,29 @@ import (
 	"strconv"
 	"time"
 )
+
+func DownloadCode(c *context.Context) {
+	batch, _ := strconv.Atoi(c.Req.FormValue("batch"))
+
+	gcs := misc.GetGiftCodeByBatch(batch)
+
+	filename := "odinGiftCode" + strconv.Itoa(batch) + ".csv"
+	b := &bytes.Buffer{}
+	b.WriteString("\xEF\xBB\xBF")
+	w := csv.NewWriter(b)
+	w.Write([]string{"礼包码"})
+	for _, vo := range gcs {
+		w.Write([]string{
+			vo.Code,
+		})
+	}
+	w.Flush()
+
+	c.Header().Set("Content-Type", "text/csv")
+	c.Header().Set("Content-Disposition", fmt.Sprintf("attachment;filename=%s", filename))
+	c.RawData(200, b.Bytes())
+
+}
 
 func GiftCodeList(c *context.Context) {
 	pager, err := strconv.Atoi(c.Req.FormValue("pager"))

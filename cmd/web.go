@@ -87,6 +87,7 @@ func router(m *macaron.Macaron) {
 		m.Post("/gift/new", tools.CreateGift)
 		m.Get("/gift/randomCode", tools.RandomCode)
 		m.Get("/gift/getBounsAll", tools.GetBounsAll)
+		m.Get("/gift/download", tools.DownloadCode)
 	})
 
 	m.NotFound(routes.NotFound)
